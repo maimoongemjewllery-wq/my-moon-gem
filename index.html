@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maimoon Gem Pro - Fixed</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="login-screen">
+    <div class="login-card">
+        <h1 style="color:#d4af37;">MAIMOON</h1>
+        <p>Gem & Jewellery Management</p>
+        <input type="password" id="pin-field" class="pin-input" placeholder="Enter PIN">
+        <button class="btn-main" onclick="checkPin()">SIGN IN</button>
+    </div>
+</div>
+
+<div class="container no-print hidden" id="main-interface">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f9f9f9; border-bottom:1px solid #ddd; margin-bottom:10px;">
+        <div>
+            <small style="color:#888;">Logged in as:</small>
+            <strong id="user-display" style="color:#2c3e50;">---</strong>
+        </div>
+        <button onclick="signOff()" style="background:#e74c3c; color:white; border:none; padding:5px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">
+            SIGN OFF
+        </button>
+    </div>
+
+    <div class="nav">
+    <button id="n-inv" class="active" onclick="tab('inventory')">STOCK</button>
+    <button id="n-sal" onclick="tab('sales')">SELL</button>
+    <button id="n-ret" onclick="tab('returns')">RETURN</button>
+    <button id="n-rep" onclick="tab('reports')">REPORT</button>
+    <button id="n-db" class="admin-view" onclick="tab('database')">DB</button>
+</div>
+    
+    </div>
+
+<div id="print-area" class="hidden"></div>
+
+<div class="container no-print">
+
+
+    <div id="p-inventory">
+    <div class="card">
+        <input type="hidden" id="edit-id">
+        <input type="text" id="t-type" placeholder="Gem Type (e.g. Blue Sapphire)">
+        <input type="text" id="t-supplier" placeholder="Supplier Name">
+        <div style="display:flex; gap:5px;">
+            <input type="number" id="t-qty" placeholder="Pcs">
+            <input type="number" id="t-carat" step="0.01" placeholder="Total Carats">
+        </div>
+        <input type="number" id="t-cost" placeholder="Total Cost (LKR)">
+        <button id="btn-save" class="btn-main" onclick="saveStock()">Save to Inventory</button>
+    </div>
+    <input type="text" id="inv-search" placeholder="🔍 Search type or supplier..." onkeyup="render()">
+    <table>
+        <thead><tr><th>Item/Supplier</th><th class="admin-view">Cost</th><th>Stock</th></tr></thead>
+        <tbody id="stock-list"></tbody>
+    </table>
+</div>
+
+    <div id="p-sales" class="hidden">
+        <div class="card">
+            <select id="s-select" onchange="updateMaxCarat()"></select>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="s-qty" placeholder="Pcs">
+                <input type="number" id="s-carat" step="0.01" placeholder="Carats">
+            </div>
+            <input type="number" id="s-price" placeholder="Sale Price (LKR)">
+            <small id="qty-hint"></small>
+            <button class="btn-main" style="background:#2c3e50" onclick="addToCart()">+ Add to Basket</button>
+            <div id="cart-list"></div>
+            <input type="text" id="s-buyer" placeholder="Buyer Name">
+            <button class="btn-main" onclick="processBulkSale()">Finalize & Print Invoice</button>
+        </div>
+    </div>
+
+    <div id="p-returns" class="hidden">
+    <div class="card" style="border-left: 5px solid #e67e22;">
+        <h3>Process Return</h3>
+        <select id="return-type-select" style="margin-bottom:10px; border:2px solid #e67e22;">
+            <option value="Sales Return">Customer Return (Sales Return)</option>
+            <option value="Supplier Return">Return to Supplier (Supplier Return)</option>
+        </select>
+        <select id="r-select"></select>
+        <div style="display:flex; gap:5px;">
+            <input type="number" id="r-qty" placeholder="Qty">
+            <input type="number" id="r-carat" step="0.01" placeholder="Carats">
+        </div>
+        <input type="number" id="r-amount" placeholder="Money Amount (Refund/Debit)">
+        <input type="text" id="r-reason" placeholder="Reason">
+        <button class="btn-main" style="background:#e67e22" onclick="processReturn()">Submit Return</button>
+    </div>
+    <div class="card">
+        <h4>Returns History</h4>
+        <table style="font-size:12px;">
+            <thead><tr><th>Date</th><th>Type</th><th>Item</th><th>Amount</th></tr></thead>
+            <tbody id="returns-history-body"></tbody>
+        </table>
+    </div>
+</div>
+
+    <div id="p-reports" class="hidden">
+    <div class="admin-view">
+        <div class="card" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div style="background:#f4f7f6; padding:10px; border-radius:5px;">
+                <small>TOTAL SALES COST</small><br><b id="r-total-cost">0</b>
+            </div>
+            <div style="background:#f4f7f6; padding:10px; border-radius:5px;">
+                <small>TOTAL REVENUE</small><br><b id="r-total-revenue">0</b>
+            </div>
+            <div style="background:#fff5f5; padding:10px; border-radius:5px;">
+                <small>SALES REFUNDS</small><br><b id="r-total-refunds" style="color:red;">0</b>
+            </div>
+            <div style="background:#e8f6ef; padding:10px; border-radius:5px;">
+                <small>NET PROFIT/LOSS</small><br><b id="r-net-profit" style="color:green;">0</b>
+            </div>
+        </div>
+    </div>.
+    <div class="card">
+    <h4>Detailed Sales Report</h4>
+    <table style="width:100%; font-size:12px;">
+        <thead>
+            <tr style="background:#eee;">
+                <th>Invoice/Buyer</th>
+                <th>Selling Price</th>
+                <th class="admin-view">Cost Price</th>
+                <th class="admin-view">Profit/Loss</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="report-list"></tbody>
+    </table>
+</div>
+    <div class="card">
+        <h4>Detailed Sales Log</h4>
+        <table style="font-size:12px;">
+            <thead><tr><th>Buyer</th><th>Cost</th><th>Price</th><th>Profit</th></tr></thead>
+            <tbody id="report-list"></tbody>
+        </table>
+    </div>
+</div>
+<div id="p-database" class="hidden">
+    <div class="card" style="border-top: 4px solid #9b59b6;">
+        <h2 style="color: #9b59b6;">Database Management</h2>
+        <p style="color: #666; font-size: 14px;">Securely export your data or restore from a previous backup file.</p>
+        
+        <hr>
+
+        <div style="margin: 20px 0;">
+            <h3>📥 Export Backup</h3>
+            <p style="font-size: 12px; margin-bottom: 10px;">Download a copy of your entire inventory, sales, and return history.</p>
+            <button onclick="exportData()" class="btn-main" style="background: #9b59b6; width: 100%;">
+                DOWNLOAD BACKUP (.JSON)
+            </button>
+        </div>
+
+        <hr>
+
+        <div style="margin: 20px 0;">
+            <h3>📤 Restore Data</h3>
+            <p style="font-size: 12px; color: #e74c3c; font-weight: bold; margin-bottom: 10px;">
+                WARNING: Restoring will delete all current data and replace it with the file data!
+            </p>
+            <input type="file" id="importFile" style="display: block; margin-bottom: 10px; width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+            <button onclick="importData()" class="btn-main" style="background: #34495e; width: 100%;">
+                UPLOAD & RESTORE
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
