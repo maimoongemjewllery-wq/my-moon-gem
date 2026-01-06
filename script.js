@@ -153,30 +153,71 @@ function render() {
 // --- INVOICE GENERATION ---
 function generateInvoice(s) {
     const area = document.getElementById('print-area');
+    
+    // WhatsApp pre-filled text
+    const whatsappMessage = window.encodeURIComponent(
+        `*MAIMOON GEM & JEWELLARY*\nInv: ${s.invId}\nTotal: LKR ${s.total.toLocaleString()}\nBalance: LKR ${s.balance.toLocaleString()}`
+    );
+
     area.innerHTML = `
         <div class="invoice-paper">
-            <div style="text-align:center">
-                <img src="logo.png" style="width:80px">
-                <h2 style="margin:5px 0">MAIMOON GEM & JEWELLARY</h2>
-                <p style="font-size:10px">101, Jayasundara Mawatha, Kalutara South<br>
-                +9471 437 4374 | maimoongemjewllery@gmail.com</p>
+            <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px;">
+                <h2 style="margin:0; font-size: 18px;">MAIMOON GEM & JEWELLARY</h2>
+                <p style="margin:4px 0; font-size: 11px;">101, Jayasundara Mawatha, Kalutara South</p>
+                <p style="margin:2px 0; font-size: 11px;">+9471 437 4374 | maimoongemjewllery@gmail.com</p>
             </div>
-            <hr>
-            <p><b>INV:</b> ${s.invId} | <b>Date:</b> ${s.date}</p>
-            <p><b>Customer:</b> ${s.buyer}</p>
-            <table style="width:100%; text-align:left; border-bottom:1px solid #000">
-                <tr><th>Description</th><th>Qty</th><th>Amount</th></tr>
-                <tr><td>${s.item} (${s.carat}cts)</td><td>${s.qty}</td><td>${s.total.toLocaleString()}</td></tr>
+
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px;">
+                <span><b>Inv No:</b> ${s.invId}</span>
+                <span><b>Date:</b> ${s.date}</span>
+            </div>
+
+            <p style="margin: 5px 0; font-size: 13px;"><b>Customer:</b> ${s.buyer}</p>
+
+            <table style="width:100%; border-collapse: collapse; margin-top: 15px; flex-grow: 1;">
+                <thead>
+                    <tr style="background: #f2f2f2; border-bottom: 2px solid #000;">
+                        <th style="text-align: left; padding: 8px 4px;">Description</th>
+                        <th style="text-align: right; padding: 8px 4px;">Amount (LKR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px 4px;">
+                            ${s.item}<br>
+                            <small style="color:#555;">${s.qty} pcs | ${s.carat} cts</small>
+                        </td>
+                        <td style="text-align: right; padding: 12px 4px; vertical-align: top;">
+                            ${s.total.toLocaleString()}
+                        </td>
+                    </tr>
+                </tbody>
             </table>
-            <div style="text-align:right; margin-top:10px">
-                <p>Total: <b>LKR ${s.total.toLocaleString()}</b></p>
-                <p>Paid: ${s.paid.toLocaleString()}</p>
-                <p><b>Balance Due: ${s.balance.toLocaleString()}</b></p>
+
+            <div style="margin-top: auto; border-top: 1px solid #000; padding-top: 10px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span>Total Amount:</span> 
+                    <span>LKR ${s.total.toLocaleString()}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span>Paid:</span> 
+                    <span>LKR ${s.paid.toLocaleString()}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; border-top: 2px solid #000; margin-top: 5px; padding-top: 5px;">
+                    <span>BALANCE:</span> 
+                    <span>LKR ${s.balance.toLocaleString()}</span>
+                </div>
             </div>
-            <center style="margin-top:20px; font-size:10px">Thank You! Come Again.</center>
-            <div class="no-print" style="margin-top:20px">
-                <button onclick="window.print()" class="btn-main">Print Now</button>
-                <button onclick="document.getElementById('print-area').classList.add('hidden')" class="btn-red">Close</button>
+
+            <div style="text-align: center; font-size: 10px; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                <p>Certified Gems & Jewellary Management System</p>
+                <p><b>Thank You for Your Business!</b></p>
+            </div>
+
+            <div class="no-print" style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="window.print()" class="btn-main" style="margin:0; background:#27ae60;">Print 5x8</button>
+                <a href="https://wa.me/?text=${whatsappMessage}" target="_blank" class="btn-main" style="margin:0; background:#25D366; text-decoration:none; text-align:center;">WhatsApp</a>
+                <button onclick="document.getElementById('print-area').classList.add('hidden')" class="btn-main" style="margin:0; background:#7f8c8d; grid-column: span 2;">Close</button>
             </div>
         </div>
     `;
