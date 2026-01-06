@@ -43,7 +43,7 @@ input, select { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #cc
 @media print {
     @page {
         /* Landscape 8x5 format */
-        size: 8in 5in;
+        size: 5in 8in;
         margin: 0.2in;
     }
 
@@ -54,8 +54,8 @@ input, select { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #cc
     }
 
     .invoice-paper {
-        width: 4.6in;  /* 8 inches minus margins */
-        height: 7.6in; /* 5 inches minus margins */
+        width: 4.6in;  /* 5 inches minus margins */
+        height: 7.6in; /* 8 inches minus margins */
         padding: 0.1in;
         margin: 0;
         border: none;
