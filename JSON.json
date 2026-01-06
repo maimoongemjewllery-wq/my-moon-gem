@@ -1,0 +1,16 @@
+{
+  "inventory": [
+    { "gemId": "B-101", "name": "Blue Sapphire", "qty": 5, "carats": 12.5, "cost": 500000, "status": "Available" }
+  ],
+  "sales": [
+    {
+      "salesId": "SAL-8821",
+      "customer": "Mohamed Rizwan",
+      "items": [{ "gemId": "B-101", "qty": 1, "price": 120000 }],
+      "total": 120000,
+      "paid": 120000,
+      "balance": 0,
+      "status": "Paid"
+    }
+  ]
+}
