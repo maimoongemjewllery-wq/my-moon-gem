@@ -66,3 +66,38 @@ input, select { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #cc
     }
     .no-print { display: none !important; }
 }
+.btn-pay-sm {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+}
+#login-screen {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center;     /* Centers vertically */
+    min-height: 100vh;       /* Takes up the full height of the viewport */
+    background-color: #f4f4f4; /* Optional: adds a background color */
+}
+
+.login-card {
+    text-align: center;      /* Centers the text and image inside the card */
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: adds depth */
+}
+
+/* Ensure the input and button take up full width or look balanced */
+.pin-input, .btn-main {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.text-red { color: #e74c3c; font-weight: bold; }
+.text-green { color: #27ae60; font-weight: bold; }
