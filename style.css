@@ -39,34 +39,30 @@ input, select { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #cc
     #print-area { position: absolute; left: 0; top: 0; width: 80%; }
     .no-print { display: none !important; }
 }
-/* A5 Printing Optimization */
-@media print {
-    @page {
-        /* Landscape 8x5 format */
-        size: 8in 5in;
-        margin: 0.2in;
-    }
-
-    body {
-        margin: 0;
-        padding: 0;
-        background: #fff;
-    }
-
+/* Portrait 5x8 Layout */
+@media screen, print {
     .invoice-paper {
-        width: 4.6in;  /* 8 inches minus margins */
-        height: 7.6in; /* 5 inches minus margins */
-        padding: 0.1in;
-        margin: 0;
-        border: none;
-        box-shadow: none;
-        font-size: 11px; /* Slightly smaller font to fit 5" height */
+        width: 5in;
+        height: 8in;
+        padding: 0.25in;
+        margin: auto;
+        background: white;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        box-sizing: border-box;
+        border: 1px solid #eee; /* Light border for screen preview */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+}
 
-    .no-print {
-        display: none !important;
+@media print {
+    @page {
+        size: 5in 8in;
+        margin: 0;
     }
+    .invoice-paper {
+        border: none;
+        margin: 0;
+    }
+    .no-print { display: none !important; }
 }
