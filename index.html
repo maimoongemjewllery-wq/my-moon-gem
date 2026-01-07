@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maimoon Gem Pro - Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Maimoon Gem Pro</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Maimoon">
-<link rel="apple-touch-icon" href="icon-192.png">
-
-<meta name="theme-color" content="#d4af37">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#d4af37">
 </head>
 <body>
 
@@ -20,7 +16,7 @@
     <div class="login-card">
         <img src="logo.png" alt="Maimoon Logo" style="width:120px; margin-bottom:10px;">
         <h1 style="color:#d4af37; margin:0;">MAIMOON</h1>
-        <p>Inventory Management System</p>
+        <p>Management System</p>
         <input type="password" id="pin-field" class="pin-input" placeholder="PIN">
         <button class="btn-main" onclick="checkPin()">SIGN IN</button>
     </div>
@@ -28,22 +24,22 @@
 
 <div class="container no-print hidden" id="main-interface">
     <div class="header-bar">
-        <span>Logged: <b id="user-display">---</b></span>
+        <span>Logged: <b id="user-display">Admin</b></span>
         <button onclick="signOff()" class="btn-red">SIGN OFF</button>
     </div>
 
     <div class="nav">
-        <button id="n-inv" class="active" onclick="tab('inventory')">INVENTORY</button>
+        <button id="n-inv" onclick="tab('inventory')">INVENTORY</button>
         <button id="n-sal" onclick="tab('sales')">SALES</button>
         <button id="n-ret" onclick="tab('returns')">RETURN</button>
         <button id="n-rep" onclick="tab('reports')">REPORT</button>
         <button id="n-set" onclick="tab('settings')">SETTINGS</button>
     </div>
 
-    <div id="p-inventory">
+    <div id="p-inventory" class="hidden">
         <div class="card">
             <h3>Add Inventory</h3>
-            <input type="text" id="t-id" placeholder="Gem ID (Manual or Auto)">
+            <input type="text" id="t-id" placeholder="Gem ID">
             <input type="text" id="t-type" placeholder="Gem Type / Name">
             <div style="display:flex; gap:5px;">
                 <input type="number" id="t-qty" placeholder="Pcs">
@@ -52,7 +48,7 @@
             <input type="number" id="t-cost" placeholder="Total Cost (LKR)">
             <button class="btn-main" onclick="saveStock()">Save to Stock</button>
         </div>
-        <input type="text" id="inv-search" placeholder="🔍 Search by ID or Name..." onkeyup="render()">
+        <input type="text" id="inv-search" placeholder="🔍 Search Inventory..." onkeyup="render()">
         <div class="list-container" id="stock-list"></div>
     </div>
 
@@ -72,10 +68,6 @@
                 <option value="Full">Full Payment (Paid)</option>
                 <option value="Partial">Partial Payment (Due)</option>
             </select>
-            <div class="card">
-    <h4>Payment Due Report</h4>
-    <div id="due-report-list"></div>
-</div>
             <input type="number" id="s-paid" class="hidden" placeholder="Amount Paid Now">
             
             <button class="btn-main" onclick="processSale()">Save & Print Invoice</button>
@@ -101,20 +93,23 @@
             <div class="stat-box">Sales: <b id="r-rev">0</b></div>
             <div class="stat-box">Profit: <b id="r-prof">0</b></div>
         </div>
-        <div id="report-list"></div>
+        <div class="card">
+            <h4>Payment Due (Balances)</h4>
+            <div id="due-report-list"></div>
+        </div>
+        <div class="card">
+            <h4>Sales History</h4>
+            <div id="report-list"></div>
+        </div>
     </div>
 
     <div id="p-settings" class="hidden">
         <div class="card">
             <h3>Backup & Restore</h3>
-            <button onclick="exportData()" class="btn-main bg-purple">Export JSON Backup</button>
+            <button onclick="exportData()" class="btn-main bg-purple">Export Backup</button>
             <hr>
-            <input type="file" id="importFile" style="font-size: 12px;">
-            <button onclick="importData()" class="btn-main bg-dark">Restore from File</button>
-        </div>
-        <div class="card">
-            <h3>User Management</h3>
-            <p>Admin: Full Access<br>Staff: Reports Hidden</p>
+            <input type="file" id="importFile">
+            <button onclick="importData()" class="btn-main bg-dark">Restore Backup</button>
         </div>
     </div>
 </div>
