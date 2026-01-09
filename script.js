@@ -178,6 +178,52 @@ function processSale() {
 
     db.sales.push(newSale);
     // ... rest of save and render logic ...
+    function completeSale() {
+    if (cart.length === 0) return alert("Cart is empty!");
+
+    const buyerName = document.getElementById('sale-buyer').value || "Cash Customer";
+    const amountPaid = Number(document.getElementById('sale-paid').value) || 0;
+    
+    // Mobile safety: Ensure numbers are strictly validated
+    const totalSale = cart.reduce((sum, item) => sum + (Number(item.total) || 0), 0);
+    const balance = totalSale - amountPaid;
+
+    const invId = genID("INV-");
+
+    // Create the Sale Record
+    const newSale = {
+        invId: invId,
+        buyer: buyerName,
+        items: [...cart], // Deep copy cart
+        total: totalSale,
+        paid: amountPaid,
+        balance: balance,
+        date: new Date().toLocaleString(),
+        status: balance <= 0 ? "Paid" : "Partial"
+    };
+
+    // Update Inventory for each item in cart
+    cart.forEach(item => {
+        const gem = db.gems.find(g => g.id === item.id);
+        if (gem) {
+            gem.qty -= item.qty;
+            gem.carat -= item.carat;
+            if (gem.qty <= 0) gem.status = "Sold";
+        }
+    });
+
+    db.sales.push(newSale);
+    save(); // This saves to localStorage and re-renders
+    
+    // Reset Cart
+    cart = [];
+    document.getElementById('sale-buyer').value = "";
+    document.getElementById('sale-paid').value = "";
+    
+    // Automatically trigger Print for the new Invoice
+    viewInvoice(invId); 
+    alert("Sale Completed Successfully!");
+}
 }
 
 // --- 7. UI RENDER & REPORTS ---
@@ -547,5 +593,6 @@ function renderDueReport() {
         dueList.appendChild(div);
     });
 }
+
 
 window.onload = () => { if(currentUser) render(); };
