@@ -36,22 +36,30 @@
         <button id="n-set" onclick="tab('settings')">SETTINGS</button>
     </div>
 
-    <div id="p-inventory" class="hidden">
-        <div class="card">
-            <h3>Add Inventory</h3>
-            <input type="text" id="t-id" placeholder="Gem ID">
-            <input type="text" id="t-type" placeholder="Gem Type / Name">
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="t-qty" placeholder="Pcs">
-                <input type="number" id="t-carat" step="0.01" placeholder="Carats">
-            </div>
-            <input type="number" id="t-cost" placeholder="Total Cost (LKR)">
-            <button class="btn-main" onclick="saveStock()">Save to Stock</button>
-        </div>
-        <input type="text" id="inv-search" placeholder="🔍 Search Inventory..." onkeyup="render()">
-        <div class="list-container" id="stock-list"></div>
-    </div>
+   <div id="p-inventory" class="hidden">
+    <div class="card">
+        <h3>Add Inventory</h3>
+        <input type="text" id="t-id" placeholder="Gem ID (Auto if empty)">
+        <input type="text" id="t-type" placeholder="Gem Type / Name">
+        
+        <input type="text" id="t-supplier" placeholder="Supplier Name / Source">
 
+        <label style="font-size: 11px; font-weight: bold; display: block; margin-top: 10px; color: #555;">TREATMENT:</label>
+        <select id="t-treatment" style="width:100%; margin-bottom:10px; padding:10px; border:1px solid #ccc; border-radius:4px;">
+            <option value="Natural">Natural (Unheated)</option>
+            <option value="Heated">Heated</option>
+        </select>
+
+        <div style="display:flex; gap:5px;">
+            <input type="number" id="t-qty" placeholder="Pcs">
+            <input type="number" id="t-carat" step="0.01" placeholder="Carats">
+        </div>
+        <input type="number" id="t-cost" placeholder="Total Cost (LKR)">
+        <button class="btn-main" onclick="saveStock()">Save to Stock</button>
+    </div>
+    <input type="text" id="inv-search" placeholder="🔍 Search Inventory..." onkeyup="render()">
+    <div class="list-container" id="stock-list"></div>
+</div>
     <div id="p-sales" class="hidden">
         <div class="card">
             <h3>New Sale</h3>
@@ -118,4 +126,5 @@
 
 <script src="script.js"></script>
 </body>
+
 </html>
