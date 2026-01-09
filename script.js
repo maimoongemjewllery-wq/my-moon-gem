@@ -140,25 +140,82 @@ function payBalance(invId) {
 }
 
 // --- 4. RENDER & UI ---
+// --- 4. RENDER & UI (FIXED) ---
 function render() {
+    if (!currentUser) return; // Don't render if not logged in
     const isAdmin = currentUser === "Admin";
     const search = (document.getElementById('inv-search')?.value || "").toLowerCase();
 
-    document.getElementById('stock-list').innerHTML = db.gems
-    .filter(g => g.id.toLowerCase().includes(search) || g.type.toLowerCase().includes(search) || g.supplier.toLowerCase().includes(search))
-    .map(g => `
-        <div class="list-item" style="border-left: 4px solid #d4af37;">
-            <div style="display:flex; justify-content:space-between;">
-                <b>${g.id}</b> 
-                <span style="font-size:10px; background:#eee; padding:2px 5px; border-radius:3px;">Source: ${g.supplier}</span>
+    // A. SYNC INVENTORY LIST (Main Stock Page)
+    const stockList = document.getElementById('stock-list');
+    if (stockList) {
+        stockList.innerHTML = db.gems
+        .filter(g => g.id.toLowerCase().includes(search) || g.type.toLowerCase().includes(search) || g.supplier.toLowerCase().includes(search))
+        .map(g => `
+            <div class="list-item" style="border-left: 4px solid #d4af37; padding:10px; margin-bottom:10px; background:#fff; border-radius:5px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                <div style="display:flex; justify-content:space-between;">
+                    <b>${g.id}</b> 
+                    <span style="font-size:10px; background:#eee; padding:2px 5px; border-radius:3px;">Source: ${g.supplier}</span>
+                </div>
+                <div>${g.type} <small style="color:#d4af37;">(${g.treatment})</small></div>
+                <div class="small">${g.qty} Pcs | ${g.carat.toFixed(2)} cts | <span class="tag-${g.status.toLowerCase()}">${g.status}</span></div>
+                ${isAdmin ? `<div class="gold" style="font-size:12px; font-weight:bold; color:#1a2a3a; margin-top:5px;">Cost: LKR ${g.cost.toLocaleString()}</div>` : ''}
             </div>
-            <div>${g.type} <small style="color:#d4af37;">(${g.treatment})</small></div>
-            <div class="small">${g.carat.toFixed(2)} cts | <span class="tag-${g.status.toLowerCase()}">${g.status}</span></div>
-            ${isAdmin ? `<div class="gold" style="font-size:12px; font-weight:bold;">Cost: LKR ${g.cost.toLocaleString()}</div>` : ''}
-        </div>
-    `).join('');
+        `).join('');
+    }
+
+    // B. SYNC SELL DROPDOWN (This was missing!)
+    const saleSelect = document.getElementById('s-select');
+    if (saleSelect) {
+        // Filter out sold items so only available gems show in the dropdown
+        const availableGems = db.gems.filter(g => g.carat > 0);
+        saleSelect.innerHTML = `<option value="">-- Select Gem to Sell --</option>` + 
+            availableGems.map(g => `<option value="${g.id}">${g.type} (${g.id}) - ${g.carat}ct</option>`).join('');
+    }
+
+    // C. SYNC REPORTS & DASHBOARD
+    let totalRev = 0;
+    let totalProf = 0;
+    let historyHTML = "";
+    let dueHTML = "";
+
+    // Sort sales by date (newest first)
+    db.sales.slice().reverse().forEach(s => {
+        totalRev += s.total;
+        totalProf += (s.profit || 0);
+
+        const cardHTML = `
+            <div class="list-item" style="border-left: 4px solid ${s.balance > 0 ? '#e74c3c' : '#27ae60'};">
+                <div style="display:flex; justify-content:space-between;">
+                    <b>${s.invId}</b>
+                    <span>${s.date}</span>
+                </div>
+                <div class="small">${s.buyer} | ${s.itemType}</div>
+                <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                    <span style="font-weight:bold;">LKR ${s.total.toLocaleString()}</span>
+                    <button onclick="reprint('${s.invId}')" style="font-size:10px; padding:2px 8px;">View</button>
+                </div>
+                ${s.balance > 0 ? `<button class="btn-pay-sm" onclick="payBalance('${s.invId}')" style="margin-top:5px; width:100%;">Pay Balance (LKR ${s.balance.toLocaleString()})</button>` : ''}
+            </div>`;
+
+        historyHTML += cardHTML;
+        if (s.balance > 0) dueHTML += cardHTML;
+    });
+
+    // Update Report UI
+    if (document.getElementById('report-list')) document.getElementById('report-list').innerHTML = historyHTML;
+    if (document.getElementById('due-report-list')) document.getElementById('due-report-list').innerHTML = dueHTML;
     
-    // ... (rest of your render logic for sales dropdowns, etc.)
+    // Update Stat Boxes
+    if (document.getElementById('r-rev')) document.getElementById('r-rev').innerText = `LKR ${totalRev.toLocaleString()}`;
+    if (document.getElementById('r-prof')) {
+        if (isAdmin) {
+            document.getElementById('r-prof').innerText = `LKR ${totalProf.toLocaleString()}`;
+            document.getElementById('r-prof').parentElement.style.display = "block";
+        } else {
+            document.getElementById('r-prof').innerText = "HIDDEN";
+        }
+    }
 }
 
 // --- 5. INVOICE (FORMAL TYPE WITH LOGO & PAYMENT DATES) ---
@@ -273,3 +330,4 @@ function reprint(id) {
 
 
 window.onload = () => { if(currentUser) render(); };
+
