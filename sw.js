@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maimoon-pro-v2';
+const CACHE_NAME = 'maimoon-pro-v3';
 const ASSETS = [
     './',
     './index.html',
@@ -45,4 +45,5 @@ self.addEventListener('fetch', (event) => {
             });
         })
     );
+
 });
