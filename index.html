@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Maimoon Gem Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a2a3a">
+</head>
+<body>
+
+<div id="login-screen">
+    <div class="login-card">
+        <img src="logo.png" alt="MAIMOON LOGO" style="width:140px; margin-bottom:15px; display: block; margin-left: auto; margin-right: auto;">
+        <h1 style="color:#d4af37; margin:0; letter-spacing: 2px;">MAIMOON</h1>
+        <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Gem & Jewellery Management</p>
+        <input type="password" id="pin-field" class="pin-input" placeholder="Enter PIN">
+        <button class="btn-main" onclick="checkPin()">SIGN IN</button>
+    </div>
+</div>
+
+<div class="container no-print hidden" id="main-interface">
+    
+    <div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; padding: 8px 15px; background: #fff; border-bottom: 1px solid #ddd;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="logo.png" alt="Logo" style="height: 30px;"> 
+            <span style="font-weight: bold; color: #1a2a3a;">MAIMOON <small style="color: #d4af37;">PRO</small></span>
+        </div>
+        <div style="text-align: right;">
+            <span style="font-size: 11px; display: block;">Logged: <b id="user-display">Admin</b></span>
+            <button onclick="signOff()" style="background:none; border:none; color:#e74c3c; font-size:11px; padding:0; cursor:pointer; font-weight:bold;">Sign Out</button>
+        </div>
+    </div>
+
+    <div class="nav">
+        <button id="n-inv" onclick="tab('inventory')" class="active">STOCK</button>
+        <button id="n-sal" onclick="tab('sales')">SELL</button>
+        <button id="n-ret" onclick="tab('returns')">RETURN</button>
+        <button id="n-rep" onclick="tab('reports')">REPORTS</button>
+        <button id="n-set" onclick="tab('settings')">SET</button>
+    </div>
+
+    <div id="p-inventory">
+        <div class="card">
+            <h3>Add New Stock</h3>
+            <input type="text" id="t-id" placeholder="Gem ID (Auto if empty)">
+            <input type="text" id="t-type" placeholder="Gem Type (e.g. Blue Sapphire)">
+            <input type="text" id="t-supplier" placeholder="Supplier Name">
+            <input type="text" id="t-treatment" placeholder="Treatment (e.g. Heat/Natural)">
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="t-qty" placeholder="Pcs">
+                <input type="number" id="t-carat" placeholder="Total Cts">
+            </div>
+            <input type="number" id="t-cost" placeholder="Total Cost (LKR)">
+            <button class="btn-main" onclick="saveStock()">Save to Inventory</button>
+        </div>
+        <div class="card">
+            <input type="text" id="inv-search" placeholder="Search ID, Type or Supplier..." oninput="render()">
+            <div id="stock-list"></div>
+        </div>
+    </div>
+
+    <div id="p-sales" class="hidden">
+        <div class="card">
+            <h3>Process Sale</h3>
+            <div style="background: #fff9e6; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #d4af37;">
+                <label style="font-size: 11px; font-weight: bold; color: #1a2a3a;">SELECT GEM & QUANTITY</label>
+                <select id="s-select" onchange="updateSaleHint()" style="border: 2px solid #d4af37;"></select>
+                <p id="s-hint" style="font-size:12px; margin:5px 0; font-weight:bold;"></p>
+                
+                <div style="display:flex; gap:10px; margin-top: 10px;">
+                    <input type="number" id="s-qty" placeholder="Pcs">
+                    <input type="number" id="s-carat" placeholder="Cts">
+                    <input type="number" id="s-price" placeholder="Price (LKR)">
+                </div>
+                <button class="btn-main" onclick="addToCart()" style="background:#27ae60; margin-top:5px;">+ Add to Cart</button>
+            </div>
+
+            <div id="cart-container" class="hidden" style="margin-bottom: 20px;">
+                <h4 style="margin: 0 0 10px 0; font-size: 12px; color: #555;">ITEMS IN CART:</h4>
+                <div id="cart-list" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fff;"></div>
+                
+                <input type="text" id="s-buyer" placeholder="Buyer Name">
+                <select id="s-pay-type" onchange="togglePartialInput()">
+                    <option value="Full">Full Payment</option>
+                    <option value="Partial">Partial Payment</option>
+                </select>
+                <input type="number" id="s-paid" class="hidden" placeholder="Amount Paid Now">
+                
+                <button class="btn-main bg-gold" onclick="processSale()" style="font-size: 16px;">Complete Sale (Total: LKR <span id="cart-total-display">0</span>)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="p-returns" class="hidden">
+        <div class="card">
+            <h3>Stock Adjustment / Returns</h3>
+            <select id="ret-type">
+                <option value="Customer">Customer Return (Stock In)</option>
+                <option value="Supplier">Supplier Return (Stock Out)</option>
+            </select>
+            <input type="text" id="ret-ref" placeholder="Gem ID (e.g., GEM-1234)">
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="ret-qty" placeholder="Pcs">
+                <input type="number" id="ret-carat" placeholder="Carats">
+            </div>
+            <button class="btn-main" style="background:#e67e22;" onclick="processReturn()">Process Adjustment</button>
+        </div>
+    </div>
+
+    <div id="p-reports" class="hidden">
+        <div class="stat-grid">
+            <div class="stat-box">Revenue: <br><b id="r-rev">0</b></div>
+            <div class="stat-box">Profit: <br><b id="r-prof">0</b></div>
+        </div>
+        <div class="card">
+            <h4>Payment Due (Balances)</h4>
+            <div id="due-report-list"></div>
+        </div>
+        <div class="card">
+            <h4>Sales History</h4>
+            <div id="report-list"></div>
+        </div>
+    </div>
+
+    <div id="p-settings" class="hidden">
+        <div class="card">
+            <h3>System Control</h3>
+            <button onclick="exportData()" class="btn-main">Export Backup</button>
+            <p style="font-size:10px; color:#777; margin-top:10px;">Maimoon Gem Pro v2.1 (Merged Build)</p>
+        </div>
+    </div>
+</div>
+
+<div id="print-area" class="hidden"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
